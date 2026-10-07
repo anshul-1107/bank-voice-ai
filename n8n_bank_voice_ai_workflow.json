@@ -1,0 +1,330 @@
+{
+  "name": "Bank Voice AI - Outreach & QA Pipeline",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "e4f8d9b1-7a2c-493e-9511-b1e06497f101",
+      "name": "When clicking ‘Execute workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        220,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "bank-voice-call-trigger",
+        "options": {}
+      },
+      "id": "a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+      "name": "Webhook Trigger (CRM / Core Banking)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        220,
+        520
+      ],
+      "webhookId": "9b12c8a4-4f27-4a0b-bf3e-91d182e01234"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fetch pending EMI customers or use incoming payload\nconst incoming = $input.all();\n\nif (incoming.length > 0 && incoming[0].json && incoming[0].json.phone) {\n  return incoming;\n}\n\n// Default Banking Leads for EMI outreach\nreturn [\n  {\n    json: {\n      customer_id: \"C001\",\n      name: \"Anshul Mathur\",\n      phone: \"+919636274630\",\n      email: \"anshul.mathur@example.com\",\n      loan_product: \"Home Loan\",\n      account_no: \"LN-HL-9011\",\n      emi_amount: 32500,\n      due_date: \"2026-10-15\",\n      do_not_call: false,\n      preferred_language: \"hi-IN\"\n    }\n  },\n  {\n    json: {\n      customer_id: \"C002\",\n      name: \"Ditya Saini\",\n      phone: \"+918209641146\",\n      email: \"ditya.saini@example.com\",\n      loan_product: \"Auto Loan\",\n      account_no: \"LN-AL-4482\",\n      emi_amount: 14800,\n      due_date: \"2026-10-12\",\n      do_not_call: false,\n      preferred_language: \"hi-IN\"\n    }\n  },\n  {\n    json: {\n      customer_id: \"C003\",\n      name: \"Rahul Sharma\",\n      phone: \"+919876543210\",\n      email: \"rahul.sharma@example.com\",\n      loan_product: \"Personal Loan\",\n      account_no: \"LN-PL-1102\",\n      emi_amount: 8900,\n      due_date: \"2026-10-10\",\n      do_not_call: false,\n      preferred_language: \"en-IN\"\n    }\n  }\n];"
+      },
+      "id": "b2c3d4e5-6f7a-4b8c-9d0e-1f2a3b4c5d6e",
+      "name": "Load EMI Customer Queue",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.do_not_call }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "c3d4e5f6-7a8b-4c9d-0e1f-2a3b4c5d6e7f",
+      "name": "DNC & Compliance Check",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        720,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:8000/api/webcall/start",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"phone\": \"{{ $json.phone }}\",\n  \"direction\": \"outbound\",\n  \"customer_id\": \"{{ $json.customer_id }}\",\n  \"purpose\": \"emi_reminder\"\n}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "d4e5f6a7-8b9c-4d0e-1f2a-3b4c5d6e7f8a",
+      "name": "Trigger Bank Voice Agent (Priya)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        980,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Simulate AI conversation turn and post-call analysis\nconst callData = $input.first().json;\nconst customer = $('Load EMI Customer Queue').first().json;\n\n// Sample simulated outcome based on Bank Voice Agent rules\nconst outcome = {\n  call_id: callData.call_id || (\"CALL-\" + Date.now()),\n  customer_id: customer.customer_id,\n  customer_name: customer.name,\n  phone: customer.phone,\n  emi_amount: customer.emi_amount,\n  status: \"COMPLETED\",\n  customer_intent: \"PROMISE_TO_PAY\",\n  payment_commitment_date: \"2026-10-12\",\n  transcript: \"Priya: Namaste Anshul ji, main Neural Finance se Priya bol rahi hoon. Aapka Rs. 32,500 ka Home Loan EMI due hai. Customer: Haan ji main Monday ko pay kar dunga. Priya: Dhanyawad ji, note kar liya hai.\",\n  qa_score: 95,\n  qa_verdict: \"PASS\",\n  guardrail_violations: 0\n};\n\nreturn [{ json: outcome }];"
+      },
+      "id": "e5f6a7b8-9c0d-4e1f-2a3b-4c5d6e7f8a9b",
+      "name": "QA Scorer & Call Ledger",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1220,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond_qa",
+              "leftValue": "={{ $json.qa_verdict }}",
+              "rightValue": "PASS",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "f6a7b8c9-0d1e-4f2a-3b4c-5d6e7f8a9b0c",
+      "name": "Check QA Verdict",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1460,
+        340
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "msg1",
+              "name": "status",
+              "value": "SUCCESS_RECORDED",
+              "type": "string"
+            },
+            {
+              "id": "msg2",
+              "name": "notification",
+              "value": "=SMS / WhatsApp sent: Dear {{ $json.customer_name }}, thank you for confirming payment of Rs {{ $json.emi_amount }} by {{ $json.payment_commitment_date }}.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a7b8c9d0-1e2f-4a3b-4c5d-6e7f8a9b0c1d",
+      "name": "Send Payment Confirmation Link",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1720,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "esc1",
+              "name": "status",
+              "value": "ESCALATED_TO_HUMAN",
+              "type": "string"
+            },
+            {
+              "id": "esc2",
+              "name": "reason",
+              "value": "=Call failed QA review or customer requested human supervisor. Call ID: {{ $json.call_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b8c9d0e1-2f3a-4b4c-5d6e-7f8a9b0c1d2e",
+      "name": "Escalate to Human Agent / Supervisor",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1720,
+        440
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "skip1",
+              "name": "status",
+              "value": "SKIPPED_DNC",
+              "type": "string"
+            },
+            {
+              "id": "skip2",
+              "name": "reason",
+              "value": "Customer registered on Do Not Call (DNC) registry or outside calling window.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c9d0e1f2-3a4b-4c5d-6e7f-8a9b0c1d2e3f",
+      "name": "Log Compliance Skip",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        980,
+        560
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Load EMI Customer Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook Trigger (CRM / Core Banking)": {
+      "main": [
+        [
+          {
+            "node": "Load EMI Customer Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load EMI Customer Queue": {
+      "main": [
+        [
+          {
+            "node": "DNC & Compliance Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DNC & Compliance Check": {
+      "main": [
+        [
+          {
+            "node": "Trigger Bank Voice Agent (Priya)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Log Compliance Skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Bank Voice Agent (Priya)": {
+      "main": [
+        [
+          {
+            "node": "QA Scorer & Call Ledger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QA Scorer & Call Ledger": {
+      "main": [
+        [
+          {
+            "node": "Check QA Verdict",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check QA Verdict": {
+      "main": [
+        [
+          {
+            "node": "Send Payment Confirmation Link",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Escalate to Human Agent / Supervisor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "1b2c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e",
+  "meta": {
+    "instanceId": "bank-voice-ai-n8n-instance"
+  },
+  "tags": []
+}
