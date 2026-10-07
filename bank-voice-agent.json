@@ -1,0 +1,73 @@
+{
+  "project_name": "Bank Voice Agent",
+  "description": "Real-time phone agent for an Indian bank / NBFC. Answers loan, EMI and insurance questions, calls customers about upcoming EMIs and policy renewals, speaks Indian English and Hinglish, and checks the quality of every call.",
+  "architecture_foundation": {
+    "based_on": "realtime-phone-agents-course (FastRTC / Twilio / Opik)",
+    "key_features": [
+      "Per-call isolation",
+      "Streaming turn-taking with barge-in",
+      "Indian telephony (Exotel / Plivo)",
+      "Sarvam speech AI (Saaras STT + Bulbul TTS)",
+      "4-layer QA pipeline"
+    ]
+  },
+  "quick_start": {
+    "install": "pip install -e \".[dev]\"",
+    "commands": {
+      "make test": "30 tests: speech, guardrails, identity gate, tools, calls, QA, campaigns, Exotel WebSocket",
+      "make simulate": "6 full phone calls offline, each scored by post-call QA",
+      "make capacity": "concurrency needed for 10,000 calls/day",
+      "make rehearse": "dry-run a reminder campaign day"
+    },
+    "production_deployment": "Copy .env.example to .env, add keys, make evals (must pass), make serve, point Exotel WebSocket to wss://<host>/telephony/exotel/ws or Plivo answer URL to /telephony/plivo/answer"
+  },
+  "project_layout": {
+    "pipeline/session.py": "One CallSession per call: streaming turn-taking, barge-in, fillers, silence handling",
+    "pipeline/factory.py": "Builds an isolated session per call; finalises + scores it after hangup",
+    "agent/brain.py": "LLM stream -> sentences -> guardrail -> speech, with tool calls in between",
+    "agent/tools.py": "Banking tools; identity gate enforced in code; amounts set by system, never the LLM",
+    "agent/facts.py": "Fact ledger: the only numbers/dates the agent may say on this call",
+    "agent/persona.py": "Priya persona, system prompt (versioned), scripted openings (AI + recording disclosure)",
+    "banking/identity.py": "DOB + caller-ID/last-4 verification, 3 strikes lock",
+    "banking/core.py": "CoreBanking interface + realistic mock (500 customers, 4 golden test customers)",
+    "speech/normalize.py": "Currency/number normalization (e.g. ₹3,12,640 -> words in English / Hindi)",
+    "speech/sarvam.py": "Sarvam Saaras STT + Bulbul TTS (WebSocket streaming)",
+    "telephony/exotel.py": "Exotel Voicebot bidirectional stream (media / mark / clear)",
+    "telephony/plivo.py": "Plivo Audio Streams (playAudio / checkpoint / clearAudio)",
+    "qa/guardrails.py": "L2: Per-sentence checks before speech (grounding, credentials, coercion, promises)",
+    "qa/scorer.py": "L3: Post-call scoring of 100% of calls (deterministic + LLM-judge rubric)",
+    "qa/report.py": "L4: Daily report, alerts, judge-vs-human agreement",
+    "evals/scenarios.yaml": "L1: Release-gate eval suite (18 cases, 10 critical)",
+    "evals/run.py": "Eval runner + release gate (exit code for CI)",
+    "evals/simulate_call.py": "Full offline call simulator",
+    "campaigns/planner.py": "Who to call today (EMI due / overdue / policy renewal), 08:00-19:00 IST, DNC, retries",
+    "campaigns/dialer.py": "Rate-limited dialer: concurrency + CPS caps, window check before every dial",
+    "api/main.py": "FastAPI: telephony WebSockets, QA review endpoints"
+  },
+  "qa_layers": [
+    {
+      "layer": "L1 Eval gate",
+      "when": "Before every deploy",
+      "what": "18 scripted calls incl. prompt injection, OTP offer, wrong person, distress; run 3x",
+      "blocking_rule": "Deploy fails if any critical case fails or <90% of others pass"
+    },
+    {
+      "layer": "L2 Guardrails",
+      "when": "Every sentence, <1 ms",
+      "what": "Made-up amounts/dates, account digits before verification, OTP/PIN requests, coercion, waivers, guarantees, 'I am human'",
+      "blocking_rule": "Sentence never spoken; model told to self-correct"
+    },
+    {
+      "layer": "L3 Post-call scoring",
+      "when": "100% of calls",
+      "what": "Deterministic metrics + LLM judge on 6 dimensions",
+      "blocking_rule": "PASS / REVIEW / FAIL; FAIL reviewed in 4 h"
+    },
+    {
+      "layer": "L4 Human review + report",
+      "when": "Daily",
+      "what": "All FAIL + REVIEW + 2% random PASS; judge-human agreement; alerts",
+      "blocking_rule": "Recalibrate judge if agreement < 85%"
+    }
+  ]
+}
