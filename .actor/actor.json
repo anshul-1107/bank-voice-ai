@@ -1,0 +1,12 @@
+{
+  "actorSpecification": 1,
+  "name": "neural-finance-voice-agent",
+  "title": "Neural Finance AI Voice Agent & Telephony Outreach Pipeline",
+  "description": "Ultra-low latency AI Voice Agent pipeline for banking outreach, EMI reminders, and loan servicing using Groq, Sarvam AI, and Exotel.",
+  "version": "1.0",
+  "meta": {
+    "templateId": "python-start"
+  },
+  "dockerfilePath": "Dockerfile",
+  "input": "./input_schema.json"
+}

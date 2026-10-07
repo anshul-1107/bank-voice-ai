@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "mode": "rehearsal",
+  "leads_total": 5,
+  "dialer_stats": {
+    "dialled": 5,
+    "answered": 0,
+    "no_answer": 5,
+    "retries_scheduled": 5,
+    "gave_up": 0,
+    "blocked_outside_window": 0,
+    "deferred_to_later_today": 5,
+    "peak_concurrency": 1
+  }
+}

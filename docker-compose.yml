@@ -1,0 +1,18 @@
+services:
+  voice:
+    build: .
+    env_file: .env
+    ports: ["8000:8000"]
+    volumes: ["./data:/app/data"]
+    deploy:
+      replicas: 1          # prod: 4+ replicas across 2 zones behind an LB with sticky WebSockets
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 15s
+  redis:                   # prod: campaign queue + QA scoring queue
+    image: redis:7-alpine
+  postgres:                # prod: QA store (same schema as the SQLite dev store)
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_PASSWORD: change-me
+      POSTGRES_DB: voiceqa

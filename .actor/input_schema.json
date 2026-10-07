@@ -1,0 +1,95 @@
+{
+  "title": "Neural Finance AI Voice Outreach Input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "mode": {
+      "title": "Pipeline Execution Mode",
+      "type": "string",
+      "description": "Choose whether to run a zero-cost campaign rehearsal simulation, trigger live phone dials, or launch the interactive Operations Dashboard.",
+      "default": "dry_run_rehearse",
+      "editor": "select",
+      "enum": ["dry_run_rehearse", "live_dial", "serve_dashboard"],
+      "enumTitles": [
+        "Rehearse Campaign (Free - Compliance & Priority Simulation)",
+        "Live Outbound Calling (Exotel PSTN Gateway)",
+        "Launch Command Center Server (FastAPI + Dashboard)"
+      ]
+    },
+    "contacts": {
+      "title": "Target Contacts List",
+      "type": "array",
+      "description": "List of customer leads to call with Name, Company, Phone, and Email.",
+      "editor": "json",
+      "prefill": [
+        {
+          "name": "Anshul Mathur",
+          "company": "Neural Finance",
+          "phone": "+919636274630",
+          "email": "anshul.mathur@example.com"
+        },
+        {
+          "name": "Ditya Saini",
+          "company": "Neural Finance",
+          "phone": "+918209641146",
+          "email": "ditya.saini@example.com"
+        },
+        {
+          "name": "Ramu Singh",
+          "company": "Neural Finance",
+          "phone": "+918619048715",
+          "email": "ramu.singh@example.com"
+        }
+      ]
+    },
+    "groqApiKey": {
+      "title": "Groq LLM API Key",
+      "type": "string",
+      "description": "API key for Groq Cloud ultra-low latency reasoning (~500ms first token).",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "sarvamApiKey": {
+      "title": "Sarvam AI API Key",
+      "type": "string",
+      "description": "API key for Sarvam AI Saaras STT & Bulbul TTS (Indian languages & Hinglish specialist).",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "exotelSid": {
+      "title": "Exotel Account SID",
+      "type": "string",
+      "description": "Exotel account SID for telephony gateway.",
+      "editor": "textfield"
+    },
+    "exotelApiKey": {
+      "title": "Exotel API Key",
+      "type": "string",
+      "description": "Exotel API key.",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "exotelApiToken": {
+      "title": "Exotel API Token",
+      "type": "string",
+      "description": "Exotel API Token.",
+      "editor": "textfield",
+      "isSecret": true
+    },
+    "exotelCallerId": {
+      "title": "Exotel Caller ID (ExoPhone)",
+      "type": "string",
+      "description": "Your registered virtual ExoPhone number (e.g. 09513886363).",
+      "editor": "textfield",
+      "default": "09513886363"
+    },
+    "exotelVoicebotAppId": {
+      "title": "Exotel Voicebot App ID",
+      "type": "string",
+      "description": "App flow ID configured in Exotel App Bazaar pointing to the WebSocket stream.",
+      "editor": "textfield",
+      "default": "1356004"
+    }
+  },
+  "required": ["mode"]
+}

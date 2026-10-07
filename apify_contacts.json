@@ -1,0 +1,32 @@
+[
+  {
+    "name": "Anshul Mathur",
+    "company": "Neural Finance",
+    "phone": "+919636274630",
+    "email": "anshul.mathur@example.com"
+  },
+  {
+    "name": "Ditya Saini",
+    "company": "Neural Finance",
+    "phone": "+918209641146",
+    "email": "ditya.saini@example.com"
+  },
+  {
+    "name": "Ramu Singh",
+    "company": "Neural Finance",
+    "phone": "+918619048715",
+    "email": "ramu.singh@example.com"
+  },
+  {
+    "name": "Rahul Sharma",
+    "company": "Tech Corp",
+    "phone": "+919876543210",
+    "email": "rahul.sharma@example.com"
+  },
+  {
+    "name": "Priya Patel",
+    "company": "Solutions Ltd",
+    "phone": "+919876543211",
+    "email": "priya.patel@example.com"
+  }
+]

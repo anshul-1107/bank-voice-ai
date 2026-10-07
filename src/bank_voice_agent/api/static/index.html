@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neural Finance | AI Voice Agent Operations & Command Center</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header class="navbar">
+    <div class="nav-brand">
+      <div class="brand-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" x2="12" y1="19" y2="22"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-title">Neural Finance <span class="badge-ai">VOICE AGENT 2.0</span></div>
+        <div class="brand-subtitle">Indian BFSI Real-Time Voice Intelligence (Hinglish & English)</div>
+      </div>
+    </div>
+
+    <!-- Live Status Indicators -->
+    <div class="nav-status">
+      <div class="status-pill status-live" title="Live Groq Inference">
+        <span class="status-dot"></span>
+        <span>Groq LLM (120B)</span>
+      </div>
+      <div class="status-pill status-live" title="Sarvam Saaras & Bulbul Active">
+        <span class="status-dot"></span>
+        <span>Sarvam Voice: Priya</span>
+      </div>
+      <div class="status-pill status-guard" title="Zero-tolerance hallucination guard">
+        <span class="status-dot"></span>
+        <span>L2 Guardrails Active</span>
+      </div>
+      <div class="active-badge" id="activeCallsBadge">
+        <span id="activeCallsCount">0</span> Active Calls
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <div class="app-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-tab="phone">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          <span>Live Phone / Simulator</span>
+        </button>
+        <button class="nav-item" data-tab="customers">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          </svg>
+          <span>Customer & Accounts</span>
+        </button>
+        <button class="nav-item" data-tab="qa">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 11l3 3L22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+          <span>QA Audit & Rubric</span>
+        </button>
+        <button class="nav-item" data-tab="campaigns">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+            <line x1="16" x2="16" y1="2" y2="6"/>
+            <line x1="8" x2="8" y1="2" y2="6"/>
+            <line x1="3" x2="19" y1="10" y2="10"/>
+          </svg>
+          <span>Outbound Campaigns</span>
+        </button>
+        <button class="nav-item" data-tab="system">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span>Telephony & Config</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-chip">
+          <div class="user-avatar">AM</div>
+          <div class="user-info">
+            <div class="user-name">Anshul Mathur</div>
+            <div class="user-role">Lead Operations</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Content Workspace -->
+    <main class="content-area">
+
+      <!-- ======================================================== TAB 1: PHONE SIMULATOR ======================================================== -->
+      <section class="tab-pane active" id="pane-phone">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">Live Voice Simulator & Testing Suite</h1>
+            <p class="pane-desc">Interact with Priya over streaming turn-taking, DOB gate verification, and Sarvam TTS audio playback.</p>
+          </div>
+          <div class="header-actions">
+            <label class="toggle-control" title="Synthesize live audio using Sarvam AI">
+              <input type="checkbox" id="audioToggle" checked>
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Play Voice Audio (Sarvam)</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="phone-grid">
+          <!-- Left Call Control Panel -->
+          <div class="card phone-card">
+            <div class="card-header">
+              <div class="card-title">
+                <span class="pill-dot green"></span> Call Dispatcher
+              </div>
+              <span class="call-badge idle" id="callStatusBadge">IDLE</span>
+            </div>
+
+            <div class="phone-form">
+              <div class="form-group">
+                <label for="callerPreset">Quick Customer Profile</label>
+                <select id="callerPreset" class="form-input">
+                  <option value="+919636274630" data-dob="11 July 2004" data-name="Anshul Mathur">Anshul Mathur (+919636274630) - PL EMI ₹12,450</option>
+                  <option value="+918209641146" data-dob="5 December 2003" data-name="Ditya Saini">Ditya Saini (+918209641146) - Term Life ₹14,500</option>
+                  <option value="+918619048715" data-dob="23 January 1986" data-name="Ramu Singh">Ramu Singh (+918619048715) - Overdue ₹4,120</option>
+                  <option value="+919800000001" data-dob="14 May 1990" data-name="Rahul Sharma">Rahul Sharma (+919800000001) - Test Golden</option>
+                  <option value="custom">-- Custom Phone Number --</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="callerPhoneInput">Caller Phone Number</label>
+                  <input type="text" id="callerPhoneInput" class="form-input font-mono" value="+919636274630">
+                </div>
+                <div class="form-group flex-1">
+                  <label for="callDirectionSelect">Direction</label>
+                  <select id="callDirectionSelect" class="form-input">
+                    <option value="inbound">Inbound (Caller dials bank)</option>
+                    <option value="outbound">Outbound (Priya calls customer)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Quick Verification Hint -->
+              <div class="verify-hint-box" id="verifyHintBox">
+                <div class="hint-title">Target Customer Profile:</div>
+                <div class="hint-details">
+                  <span id="hintName">Anshul Mathur</span> &bull; DOB: <strong id="hintDob">11 July 2004</strong> &bull; Loan: <span id="hintLoan">PL ₹12,450 Due in 3d</span>
+                </div>
+              </div>
+
+              <!-- Big Action Buttons -->
+              <div class="call-actions">
+                <button id="btnStartCall" class="btn btn-call">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+                  </svg>
+                  <span>Connect Call with Priya</span>
+                </button>
+                <button id="btnBargeIn" class="btn btn-warning" disabled title="Interrupt Priya mid-sentence">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                  <span>Barge-in (Interrupt)</span>
+                </button>
+                <button id="btnEndCall" class="btn btn-danger" disabled>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/>
+                    <line x1="23" y1="1" x2="1" y2="23"/>
+                  </svg>
+                  <span>Hang Up</span>
+                </button>
+              </div>
+
+              <!-- Automated Scenario Dry Run -->
+              <div class="divider"><span>OR RUN SCRIPTED SUITE</span></div>
+              <div class="form-group">
+                <label for="scriptedScenarioSelect">Automated Benchmark Scenarios</label>
+                <div class="input-with-button">
+                  <select id="scriptedScenarioSelect" class="form-input">
+                    <option value="anshul_call">Anshul Mathur EMI Inquiry (Live Personal Profile)</option>
+                    <option value="emi_hinglish_happy">EMI Hinglish Happy Path (Rahul Sharma)</option>
+                    <option value="barge_in">Caller Mid-sentence Interruption</option>
+                    <option value="wrong_dob_locked">3 Wrong DOBs Security Lockout</option>
+                    <option value="outbound_emi_reminder">Outbound EMI Due Reminder Call</option>
+                    <option value="hallucination_caught">Hallucination Blocked by L2 Guardrail</option>
+                    <option value="silent_caller">Silence Reprompts & Compliant Hangup</option>
+                  </select>
+                  <button id="btnRunScenario" class="btn btn-secondary">
+                    <span>Run Scenario</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Middle & Right: Live Call Interactive Window -->
+          <div class="card terminal-card">
+            <div class="card-header">
+              <div class="agent-profile-banner">
+                <div class="avatar-priya">P</div>
+                <div class="agent-details">
+                  <div class="agent-name">Priya (AI Customer Care Executive)</div>
+                  <div class="agent-tags">
+                    <span class="tag">Pune Hub</span>
+                    <span class="tag">Bilingual Hindi/English</span>
+                    <span class="tag">Voice: Bulbul v2</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="waveform-container" id="waveformBox">
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-bar"></div>
+                <div class="waveform-text" id="waveStatusText">Waiting for call...</div>
+              </div>
+            </div>
+
+            <!-- Scrollable Call Transcript -->
+            <div class="transcript-feed" id="transcriptFeed">
+              <div class="empty-state">
+                <div class="empty-icon">🎧</div>
+                <div class="empty-title">Ready to Connect</div>
+                <div class="empty-desc">Click "Connect Call with Priya" or select a customer profile to start speaking.</div>
+              </div>
+            </div>
+
+            <!-- Caller Interactive Input Box -->
+            <div class="caller-input-bar">
+              <button id="btnMicSpeak" class="btn-mic" title="Speak into your microphone">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                  <line x1="12" x2="12" y1="19" y2="22"/>
+                </svg>
+              </button>
+              <input type="text" id="userInputText" class="caller-input" placeholder="Say something (e.g. 'Mera EMI kitna hai' or '11 July 2004')..." disabled>
+              <button id="btnSendTurn" class="btn btn-send" disabled>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"/>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                </svg>
+                <span>Send</span>
+              </button>
+            </div>
+
+            <!-- Live Telemetry Strip -->
+            <div class="telemetry-bar">
+              <div class="telem-item">Identity: <strong id="telemIdentity">UNVERIFIED</strong></div>
+              <div class="telem-item">Strikes: <span id="telemStrikes">0 / 3</span></div>
+              <div class="telem-item">Turn Latency: <span id="telemLatency">-</span></div>
+              <div class="telem-item">Guardrails: <span class="telem-ok" id="telemGuard">Zero Blocks</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Call Summary QA Card (Appears after call terminates) -->
+        <div class="modal-overlay hidden" id="qaResultModal">
+          <div class="modal-card">
+            <div class="modal-header">
+              <div class="modal-title">
+                <span>Post-Call QA Audit Report</span>
+                <span class="badge-verdict pass" id="modalVerdictBadge">PASS</span>
+              </div>
+              <button class="btn-close" id="btnCloseModal">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBodyContent">
+              <!-- Dynamically populated -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== TAB 2: CUSTOMERS ======================================================== -->
+      <section class="tab-pane" id="pane-customers">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">Customer & Core Banking Management</h1>
+            <p class="pane-desc">500+ Indian customer records, loan ledgers, insurance policies, and identity verification mapping.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="btnOpenAddCustomerModal">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <span>Add Customer</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Search Bar -->
+        <div class="filter-strip">
+          <div class="search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <input type="text" id="customerSearchInput" placeholder="Search by name, phone (+919636274630), or Customer ID...">
+          </div>
+          <div class="pill-group">
+            <button class="filter-pill active" data-filter="all">All Profiles</button>
+            <button class="filter-pill" data-filter="loans">Has Active Loans</button>
+            <button class="filter-pill" data-filter="overdue">Overdue EMIs</button>
+            <button class="filter-pill" data-filter="policies">Insurance Policies</button>
+          </div>
+        </div>
+
+        <!-- Customer Cards Grid -->
+        <div class="customer-grid" id="customerCardsGrid">
+          <!-- Dynamically loaded from /api/customers -->
+        </div>
+      </section>
+
+      <!-- ======================================================== TAB 3: QA AUDITING ======================================================== -->
+      <section class="tab-pane" id="pane-qa">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">4-Layer QA & Compliance Command Center</h1>
+            <p class="pane-desc">Audits 100% of calls deterministically + LLM Judge rubric. Flagged calls reviewed in &lt;4 hours.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-secondary" id="btnRefreshQA">Refresh Today's Audit</button>
+          </div>
+        </div>
+
+        <!-- Metrics Ribbon -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-label">Pass Rate (Target: 95%)</div>
+            <div class="metric-value font-mono" id="qaMetricPassRate">--%</div>
+            <div class="metric-sub" id="qaMetricCalls">0 calls audited today</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Mean Rubric Score</div>
+            <div class="metric-value font-mono highlight" id="qaMetricScore">-- / 5.0</div>
+            <div class="metric-sub">LLM Judge: gpt-oss-120b</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">P95 Turn Latency</div>
+            <div class="metric-value font-mono" id="qaMetricLatency">-- ms</div>
+            <div class="metric-sub">Budget: &lt; 1500 ms</div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-label">Human Review Queue</div>
+            <div class="metric-value font-mono" id="qaMetricQueue">0</div>
+            <div class="metric-sub">Flagged or random audits</div>
+          </div>
+        </div>
+
+        <!-- Split View: Review Queue & Recent Call Audits -->
+        <div class="qa-content-split">
+          <div class="card qa-table-card">
+            <div class="card-header">
+              <div class="card-title">Recent Calls & Review Queue</div>
+              <span class="tag-counter" id="qaTotalRowsCount">0 calls</span>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="qaCallsTable">
+                <thead>
+                  <tr>
+                    <th>Call ID</th>
+                    <th>Time</th>
+                    <th>Direction / Purpose</th>
+                    <th>Duration</th>
+                    <th>Verdict</th>
+                    <th>Score</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="qaCallsTbody">
+                  <tr><td colspan="7" class="text-center text-muted">No calls logged yet. Run a call in the simulator!</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Deep Transcript Audit Drawer -->
+          <div class="card qa-detail-card" id="qaDetailCard">
+            <div class="card-header">
+              <div class="card-title">Call Deep-Dive & Rubric</div>
+              <span class="call-id-tag" id="qaDetailCallId">Select a call</span>
+            </div>
+            <div class="qa-detail-body" id="qaDetailBody">
+              <div class="empty-state">
+                <div class="empty-icon">🔍</div>
+                <div class="empty-title">Call Inspection</div>
+                <div class="empty-desc">Click on any call in the table to inspect turn-by-turn timestamps, tool logs, guardrail status, and judge evidence.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== TAB 4: OUTBOUND CAMPAIGNS ======================================================== -->
+      <section class="tab-pane" id="pane-campaigns">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">Outbound Reminder Campaigns & Rate-Limited Dialer</h1>
+            <p class="pane-desc">Automated, compliant reminder batches for EMI Due, Overdue collections, and Policy renewals.</p>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-primary" id="btnLaunchRehearsal">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              <span>Run Campaign Rehearsal</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="campaign-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Today's Campaign Queue (08:00 - 19:00 IST)</div>
+              <span class="status-badge" id="campaignWindowBadge">IN WINDOW</span>
+            </div>
+            <div class="campaign-summary-stats" id="campaignSummaryStats">
+              <div class="camp-stat">
+                <div class="camp-stat-num" id="campJobsTotal">--</div>
+                <div class="camp-stat-label">Calls Scheduled</div>
+              </div>
+              <div class="camp-stat">
+                <div class="camp-stat-num" id="campOverdueTotal">--</div>
+                <div class="camp-stat-label">EMI Overdue</div>
+              </div>
+              <div class="camp-stat">
+                <div class="camp-stat-num" id="campDueTotal">--</div>
+                <div class="camp-stat-label">EMI Due (1-3d)</div>
+              </div>
+              <div class="camp-stat">
+                <div class="camp-stat-num" id="campRenewalTotal">--</div>
+                <div class="camp-stat-label">Policy Renewals</div>
+              </div>
+            </div>
+
+            <div class="capacity-preview-box">
+              <div class="cap-title">Rate Limiting & Concurrency Controls</div>
+              <div class="cap-grid">
+                <div class="cap-row"><span>Peak Concurrency Cap:</span> <strong>150 calls</strong></div>
+                <div class="cap-row"><span>Calls Per Second (CPS):</span> <strong>3.0 dials/sec</strong></div>
+                <div class="cap-row"><span>DNC Opt-outs Filtered:</span> <strong id="campDncFiltered">--</strong></div>
+                <div class="cap-row"><span>Max Retry Gap:</span> <strong>120 minutes</strong></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Dialer Simulation & Dry-Run Results</div>
+              <span class="call-badge" id="rehearsalStatusBadge">READY</span>
+            </div>
+            <div class="rehearsal-output-box" id="rehearsalOutputBox">
+              <div class="empty-state">
+                <div class="empty-icon">📈</div>
+                <div class="empty-title">No Rehearsal Run</div>
+                <div class="empty-desc">Click "Run Campaign Rehearsal" to simulate dialing all scheduled accounts today with simulated customer answer rates.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================== TAB 5: SYSTEM & TELEPHONY ======================================================== -->
+      <section class="tab-pane" id="pane-system">
+        <div class="pane-header">
+          <div>
+            <h1 class="pane-title">Telephony Infrastructure & Model Configuration</h1>
+            <p class="pane-desc">Live endpoints, WebSockets, Groq API, Sarvam credentials, and bridge URLs.</p>
+          </div>
+        </div>
+
+        <div class="config-grid">
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Live Telephony Connectors</div>
+            </div>
+            <div class="config-list">
+              <div class="config-row">
+                <div class="config-meta">
+                  <div class="config-name">Exotel Voicebot WebSocket Stream</div>
+                  <div class="config-val font-mono">wss://<span class="public-host">voice.yourbank.example</span>/telephony/exotel/ws</div>
+                </div>
+                <button class="btn-copy" onclick="copyText('/telephony/exotel/ws')">Copy</button>
+              </div>
+              <div class="config-row">
+                <div class="config-meta">
+                  <div class="config-name">Plivo Answer URL (XML Stream)</div>
+                  <div class="config-val font-mono">https://<span class="public-host">voice.yourbank.example</span>/telephony/plivo/answer</div>
+                </div>
+                <button class="btn-copy" onclick="copyText('/telephony/plivo/answer')">Copy</button>
+              </div>
+              <div class="config-row">
+                <div class="config-meta">
+                  <div class="config-name">Audio Format</div>
+                  <div class="config-val font-mono">8 kHz linear16 / PCM (PSTN Narrowband standard)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">AI Stack Details</div>
+            </div>
+            <div class="config-list">
+              <div class="config-row">
+                <div class="config-meta">
+                  <div class="config-name">LLM Engine</div>
+                  <div class="config-val">Groq Cloud — <code>openai/gpt-oss-120b</code></div>
+                </div>
+                <span class="badge-verdict pass">Connected</span>
+              </div>
+              <div class="config-row">
+                <div class="config-meta">
+                  <div class="config-name">Speech-to-Text (STT)</div>
+                  <div class="config-val">Sarvam Saaras Realtime (v3) — Code-mixed Hinglish</div>
+                </div>
+                <span class="badge-verdict pass">Connected</span>
+              </div>
+              <div class="config-row">
+                <div class="config-meta">
+                  <div class="config-name">Text-to-Speech (TTS)</div>
+                  <div class="config-val">Sarvam Bulbul (v2/v3) — Persona: <strong>Priya</strong></div>
+                </div>
+                <span class="badge-verdict pass">Connected</span>
+              </div>
+              <div class="config-row">
+                <div class="config-meta">
+                  <div class="config-name">QA Judge Model</div>
+                  <div class="config-val">Groq Cloud (120B Rubric Auditor)</div>
+                </div>
+                <span class="badge-verdict pass">Active</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Add Customer Modal -->
+  <div class="modal-overlay hidden" id="addCustomerModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Add New Banking Customer</div>
+        <button class="btn-close" id="btnCloseAddCustomer">&times;</button>
+      </div>
+      <form id="addCustomerForm" class="modal-body">
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Full Name</label>
+            <input type="text" id="newCustName" class="form-input" required placeholder="e.g. Ramesh Verma">
+          </div>
+          <div class="form-group flex-1">
+            <label>Phone Number (E.164)</label>
+            <input type="text" id="newCustPhone" class="form-input font-mono" required placeholder="+919876543210">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Date of Birth (YYYY-MM-DD)</label>
+            <input type="date" id="newCustDob" class="form-input" required value="2000-01-15">
+          </div>
+          <div class="form-group flex-1">
+            <label>Language Preference</label>
+            <select id="newCustLang" class="form-input">
+              <option value="hi-IN">Hindi / Hinglish</option>
+              <option value="en-IN">Indian English</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="divider"><span>LOAN PRODUCT (OPTIONAL)</span></div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label>Loan Product</label>
+            <select id="newCustLoanProduct" class="form-input">
+              <option value="Personal Loan">Personal Loan</option>
+              <option value="Home Loan">Home Loan</option>
+              <option value="Two-Wheeler Loan">Two-Wheeler Loan</option>
+              <option value="Consumer Durable Loan">Consumer Durable Loan</option>
+            </select>
+          </div>
+          <div class="form-group flex-1">
+            <label>Monthly EMI Amount (₹)</label>
+            <input type="number" id="newCustEmi" class="form-input" placeholder="e.g. 15000" value="15000">
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="btnCancelAddCustomer">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save & Register</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Audio Player Element -->
+  <audio id="ttsAudioPlayer" class="hidden"></audio>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
